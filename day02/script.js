@@ -1,38 +1,61 @@
-var fs = require('fs');
-var inputFile = './input.txt';
-var advInput = fs.readFileSync(inputFile, 'utf8');
+var advInput = require('./input.js');
 
 function checksum1(input) {
     var rows = input.split('\n');
     var highest = 0;
-    var lowest = 9;
+    var lowest = Infinity;
     var sum = 0;
 
-    for(var r = 0; r < rows.length - 1; r++) {
+    for(var r = 0; r < rows.length; r++) {
         var row = rows[r].split(/\s+/g);
-        console.log(row);
 
         for (var c = 0; c < row.length; c++) {
-            var cell = row[c].split('');
+            var num = +row[c];
+            var isLastIndex = (row.length - 1) === c;
 
-            for (var n = 0; n < cell.length; n++) {
-                var num = +cell[n];
-                var lastIndex = (cell.length - 1) === n;
+            highest = (num > highest) ? num : highest;
+            lowest = (num < lowest) ? num : lowest;
 
-                highest = (num > highest) ? num : highest;
-                lowest = (num < lowest) ? num : lowest;
-
-                if (lastIndex) {
-                    sum += (highest - lowest);
-                    console.log(cell.join(''), highest + ' - ' + lowest + ' = ', (highest - lowest));
-                    highest = 0;
-                    lowest = 9;
-                }
+            if (isLastIndex) {
+                sum += (highest - lowest);
+                highest = 0;
+                lowest = Infinity;
             }
         }
     }
-
-    console.log(sum);
 }
 
-checksum1(advInput);
+function checksum2(input) {
+    var rows = input.split('\n');
+    var currentCellVal = 0;
+    var sum = 0;
+    var didBreak = false;
+
+    for (var r = 0; r < rows.length; r++) {
+        var row = rows[r].split(/\s+/g);
+
+        for (var c = 0; c < row.length; c++) {
+            var cell = +row[c];
+            currentCellVal = cell;
+
+            for (var i = 0; i < row.length; i++) {
+                var cellDivider = +row[i];
+
+                if ((i !== c) && (currentCellVal % cellDivider === 0)) {
+                    sum += (currentCellVal / cellDivider);
+                    currentCellVal = 0;
+                    didBreak = true;
+                    break;
+                }
+            }
+
+            if (didBreak) {
+                didBreak = false;
+                break;
+            }
+        }
+    }
+}
+
+checksum1(advInput); // 34581
+checksum2(advInput); // 214
