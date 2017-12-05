@@ -29,7 +29,6 @@ function checksum2(input) {
     var rows = input.split('\n');
     var currentCellVal = 0;
     var sum = 0;
-    var didBreak = false;
 
     for (var r = 0; r < rows.length; r++) {
         var row = rows[r].split(/\s+/g);
@@ -43,16 +42,11 @@ function checksum2(input) {
 
                 if ((i !== c) && (currentCellVal % cellDivider === 0)) {
                     sum += (currentCellVal / cellDivider);
-                    currentCellVal = 0;
-                    didBreak = true;
                     break;
                 }
             }
 
-            if (didBreak) {
-                didBreak = false;
-                break;
-            }
+            continue;
         }
     }
 }
