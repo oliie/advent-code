@@ -29,22 +29,54 @@
 
 
 var advInput = require('./input.js');
+var direction = 'right';
+var matrix = { 1 : { x: 0, y: 0 } };
 
 function accessDataSteps(input) {
-    var matrix = {};
+    var lastPosition = matrix[1];
 
     for (var i = 0; i < input; i++) {
         if (i === 0) {
-            matrix[i+1] = { x: 0, y: 0 };
             continue;
         }
+
+        matrix[(i+1)] = getCoordinates(i, lastPosition);
     }
 
     console.log(matrix);
 }
 
-function getDirection(index) {
+function getCoordinates(index, lastPos) {
+    var coordinates = {};
 
+    if (direction === 'right') {
+        if ((lastPos.x === matrix[index].x) || lastPos.y < 0) {
+            coordinates.x = (lastPos.x + 1);
+            coordinates.y = lastPos.y;
+
+            for (let m in matrix) {
+                if (coordinates.x > matrix[m].x) {
+                    direction = 'up';
+                }
+            }
+        }
+    }
+
+    if (direction === 'up') {
+        if ((lastPos.y === matrix[index].x) || lastPos.y <= 0) {
+            coordinates.x = lastPos.x;
+            coordinates.y = (lastPos.y + 1);
+
+            for (let m in matrix) {
+                if (coordinates.y > m.y) {
+                    direction = 'up';
+                    break;
+                }
+            }
+        }
+    }
+
+    return coordinates;
 }
 
-accessDataSteps(25);
+accessDataSteps(12);
